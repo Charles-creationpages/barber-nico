@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Barbershop Louhans — Projet</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --or:#A37E2C; --or-l:#C9A24A; --or-pale:#FBF4E3; --or-bd:#E8D5A3;
+  --vert:#006039; --vert-l:#007A49; --vert-pale:#E0F0E8; --vert-bd:#A3CDB8;
+  --blanc:#FAFAF6; --surface:#F4F3EE; --card:#FFFFFF;
+  --tx:#1C1C18; --mu:#6B6B60; --hi:#A8A89A;
+  --bd:rgba(28,28,24,.09); --bdm:rgba(28,28,24,.15);
+  --red:#C0392B; --red-pale:#FDECEA;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--blanc);color:var(--tx);font-size:15px;line-height:1.5;min-height:100vh}
+
+/* HEADER */
+header{background:var(--vert);color:white;height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 1.5rem;position:sticky;top:0;z-index:200}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:34px;height:34px;background:var(--or);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:white;flex-shrink:0}
+.logo-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;line-height:1.1}
+.logo-city{font-size:11px;opacity:.5;letter-spacing:.06em}
+.profile-toggle{display:flex;background:rgba(255,255,255,.12);border-radius:8px;padding:3px;gap:2px}
+.pbtn{background:none;border:none;color:rgba(255,255,255,.6);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;padding:5px 12px;border-radius:6px;cursor:pointer;transition:all .15s}
+.pbtn.active{background:white;color:var(--vert)}
+
+/* LAYOUT */
+.app-body{display:flex;min-height:calc(100vh - 60px)}
+
+/* SIDEBAR */
+.sidebar{width:220px;flex-shrink:0;background:var(--card);border-right:1px solid var(--bd);padding:1.25rem 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+.sb-section{margin-bottom:1.5rem}
+.sb-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--hi);padding:0 1rem;margin-bottom:.4rem;display:block}
+.sb-item{display:flex;align-items:center;gap:10px;padding:.55rem 1rem;cursor:pointer;font-size:13px;color:var(--mu);border:none;background:none;width:100%;text-align:left;transition:all .12s;border-left:3px solid transparent}
+.sb-item:hover{background:var(--surface);color:var(--tx)}
+.sb-item.active{background:var(--vert-pale);color:var(--vert);font-weight:500;border-left-color:var(--vert)}
+.sdot{width:8px;height:8px;border-radius:50%;background:var(--bd);flex-shrink:0}
+.sdot.done{background:var(--vert)}.sdot.cur{background:var(--or)}
+.sbadge{margin-left:auto;font-size:10px;padding:1px 6px;border-radius:10px;font-weight:500}
+.sb-d{background:var(--vert-pale);color:var(--vert)}.sb-c{background:var(--or-pale);color:var(--or)}.sb-t{background:var(--surface);color:var(--hi)}
+
+/* PANEL */
+.panel{flex:1;padding:1.75rem 2rem;max-width:900px;min-width:0}
+.page{display:none}.page.active{display:block}
+.ptitle{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--vert);margin-bottom:.2rem}
+.psub{font-size:13px;color:var(--mu);margin-bottom:1.5rem}
+.divider{height:1px;background:var(--bd);margin-bottom:1.5rem}
+
+/* SECTION HEAD */
+.shd{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--hi);padding-bottom:8px;border-bottom:1px solid var(--bd);margin-bottom:1rem;margin-top:1.5rem}
+.shd:first-of-type{margin-top:0}
+
+/* PROGRESS */
+.prog-wrap{margin-bottom:1.5rem}
+.prog-info{display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px}
+.prog-info span{color:var(--mu)}.prog-info strong{color:var(--vert)}
+.prog-bar{height:6px;background:var(--surface);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--vert),var(--or));border-radius:3px;transition:width .4s}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:1.5rem}
+.metric{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:1rem}
+.ml{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--mu);margin-bottom:4px}
+.mv{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--vert);line-height:1;margin-bottom:3px}
+.ms{font-size:11px;color:var(--hi)}
+
+/* ÉTAPES */
+.etapes{display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem}
+.etape{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:1rem 1.1rem;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:12px}
+.etape:hover{border-color:var(--or-bd)}
+.eicon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;font-weight:700;font-family:'Playfair Display',serif}
+.eicon.done{background:var(--vert-pale);color:var(--vert)}
+.eicon.cur{background:var(--or-pale);color:var(--or)}
+.eicon.todo{background:var(--surface);color:var(--hi)}
+.ebody{flex:1;min-width:0}
+.enum{font-size:10px;font-weight:500;color:var(--hi);text-transform:uppercase;letter-spacing:.06em}
+.ename{font-size:14px;font-weight:500;color:var(--tx)}
+.edesc{font-size:12px;color:var(--mu);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.estatus{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500;flex-shrink:0}
+.es-d{background:var(--vert-pale);color:var(--vert)}
+.es-c{background:var(--or-pale);color:#7A5C18}
+.es-t{background:var(--surface);color:var(--hi)}
+
+/* NOTICES */
+.notice{border-radius:10px;padding:12px 16px;font-size:13px;line-height:1.6;margin-bottom:1rem}
+.n-warn{background:var(--or-pale);border-left:4px solid var(--or);color:#5A3E10}
+.n-ok{background:var(--vert-pale);border-left:4px solid var(--vert);color:#004028}
+.n-info{background:#EEF3FF;border-left:4px solid #4A7AE0;color:#2A3F80}
+
+/* TASKS */
+.tasks{display:flex;flex-direction:column}
+.task{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--bd)}
+.task:last-child{border-bottom:none}
+.tcheck{width:20px;height:20px;border:1.5px solid var(--bdm);border-radius:5px;flex-shrink:0;margin-top:1px;cursor:pointer;background:white;transition:all .15s;display:flex;align-items:center;justify-content:center;font-size:11px;color:white;font-weight:700;user-select:none}
+.tcheck:hover{border-color:var(--vert)}
+.tcheck.checked{background:var(--vert);border-color:var(--vert)}
+.tbody{flex:1;min-width:0}
+.ttitle{font-size:14px;transition:all .15s}
+.ttitle.checked{text-decoration:line-through;color:var(--hi)}
+.tnote{font-size:12px;color:var(--mu);margin-top:2px;line-height:1.4}
+.ttag{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500;flex-shrink:0;margin-top:2px;white-space:nowrap}
+.tag-u{background:var(--red-pale);color:var(--red)}
+.tag-c{background:#EEF3FF;color:#2A3F80}
+.tag-n{background:var(--or-pale);color:#7A5C18}
+.tag-b{background:var(--surface);color:var(--mu)}
+
+/* PILL */
+.pill{display:inline-block;font-size:11px;padding:2px 9px;border-radius:20px;font-weight:500}
+.pr{background:var(--red-pale);color:var(--red)}.pw{background:#FFF3CD;color:#856404}
+.pg{background:var(--vert-pale);color:var(--vert)}.pb{background:#EEF3FF;color:#2A3F80}.pn{background:var(--surface);color:var(--mu)}
+
+/* TABLE */
+.dtable{width:100%;border-collapse:collapse;font-size:13px}
+.dtable th{text-align:left;font-size:10px;font-weight:500;color:var(--mu);text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;border-bottom:1px solid var(--bd)}
+.dtable td{padding:10px 10px;border-bottom:1px solid var(--bd);vertical-align:top}
+.dtable tr:last-child td{border-bottom:none}
+.dtable tr:hover td{background:var(--surface)}
+
+/* KV & CARD */
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:1.1rem}
+.ctitle{font-size:13px;font-weight:500;margin-bottom:10px}
+.kv{display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--bd);font-size:13px}
+.kv:last-child{border-bottom:none}
+.kk{color:var(--mu)}.kv-v{font-weight:500}.kv-v.ac{color:var(--vert)}.kv-v.wa{color:var(--or)}
+.kdiff{font-size:11px;color:var(--or);font-weight:500}
+
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem}
+
+/* TEXTAREA */
+.narea{width:100%;min-height:90px;border:1px solid var(--bd);border-radius:8px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--tx);background:var(--surface);resize:vertical;outline:none;transition:border-color .15s;line-height:1.6}
+.narea:focus{border-color:var(--vert);background:white}
+.narea::placeholder{color:var(--hi)}
+
+/* MOBILE NAV */
+.mnav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--vert);z-index:200;padding:6px 8px;justify-content:space-around;border-top:1px solid rgba(255,255,255,.1)}
+.mbtn{background:none;border:none;color:rgba(255,255,255,.55);font-family:'DM Sans',sans-serif;font-size:11px;padding:6px 10px;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;transition:all .15s}
+.mbtn.active{background:rgba(255,255,255,.15);color:white}
+.micon{font-size:18px;line-height:1}
+
+/* RESPONSIVE */
+@media(max-width:680px){
+  .sidebar{display:none}
+  .panel{padding:1.25rem 1rem 5rem;max-width:100%}
+  .mnav{display:flex}
+  .two-col{grid-template-columns:1fr}
+  .metrics{grid-template-columns:1fr 1fr}
+  .ptitle{font-size:20px}
+  .edesc{display:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">B</div>
+    <div>
+      <div class="logo-name">Barbershop Louhans</div>
+      <div class="logo-city">Nicolas &amp; Charles · 2026</div>
+    </div>
+  </div>
+  <div class="profile-toggle">
+    <button class="pbtn active" onclick="setProfile('charles')">Charles</button>
+    <button class="pbtn" onclick="setProfile('nicolas')">Nicolas</button>
+  </div>
+</header>
+
+<div class="app-body">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-section">
+    <span class="sb-label">Navigation</span>
+    <button class="sb-item active" onclick="showPage('accueil')"><span class="sdot cur"></span>Accueil</button>
+    <button class="sb-item" onclick="showPage('taches')"><span class="sdot cur"></span>Tâches <span class="sbadge sb-c" id="tbadge">7</span></button>
+    <button class="sb-item" onclick="showPage('notes')"><span class="sdot"></span>Notes &amp; décisions</button>
+  </div>
+  <div class="sb-section">
+    <span class="sb-label">Étapes du projet</span>
+    <button class="sb-item" onclick="showPage('e1')"><span class="sdot done"></span>1 · Faisabilité<span class="sbadge sb-d">✓</span></button>
+    <button class="sb-item" onclick="showPage('e2')"><span class="sdot cur"></span>2 · Modèle éco<span class="sbadge sb-c">En cours</span></button>
+    <button class="sb-item" onclick="showPage('e3')"><span class="sdot"></span>3 · Juridique<span class="sbadge sb-t">À venir</span></button>
+    <button class="sb-item" onclick="showPage('e4')"><span class="sdot"></span>4 · Financement<span class="sbadge sb-t">À venir</span></button>
+    <button class="sb-item" onclick="showPage('e5')"><span class="sdot"></span>5 · Business plan<span class="sbadge sb-t">À venir</span></button>
+    <button class="sb-item" onclick="showPage('e6')"><span class="sdot"></span>6 · Administratif<span class="sbadge sb-t">À venir</span></button>
+    <button class="sb-item" onclick="showPage('e7')"><span class="sdot"></span>7 · Lancement<span class="sbadge sb-t">À venir</span></button>
+  </div>
+</aside>
+
+<!-- PANEL -->
+<main class="panel">
+
+<!-- ACCUEIL -->
+<div class="page active" id="page-accueil">
+  <div class="ptitle">Vue d'ensemble</div>
+  <div class="psub">Barbershop Louhans · Suivi de projet · Avril 2026</div>
+  <div class="divider"></div>
+
+  <!-- VUE CHARLES -->
+  <div id="charles-accueil">
+    <div class="prog-wrap">
+      <div class="prog-info"><span>Avancement global</span><strong>1 étape sur 7 complétée</strong></div>
+      <div class="prog-bar"><div class="prog-fill" style="width:14%"></div></div>
+    </div>
+    <div class="metrics">
+      <div class="metric"><div class="ml">Local</div><div class="mv" style="font-size:18px;margin-top:4px">55 m²</div><div class="ms">Centre-ville · 540 €/mois</div></div>
+      <div class="metric"><div class="ml">BP Nicolas</div><div class="mv" style="color:var(--or);font-size:18px;margin-top:4px">~6 mois</div><div class="ms">Avant ouverture</div></div>
+      <div class="metric"><div class="ml">Cible clients</div><div class="mv">~1 900</div><div class="ms">Hommes 15–55 ans</div></div>
+      <div class="metric"><div class="ml">Concurrents</div><div class="mv">2</div><div class="ms">dont 1 excentré</div></div>
+    </div>
+    <div class="notice n-warn"><b>Action terrain urgente :</b> Passer devant S&amp;A Barber Shop (10 rue d'Alsace) — activité réelle ? tarifs visibles ? ambiance ?</div>
+    <div class="shd">Feuille de route</div>
+    <div class="etapes">
+      <div class="etape" onclick="showPage('e1')"><div class="eicon done">✓</div><div class="ebody"><div class="enum">Étape 1</div><div class="ename">Étude de faisabilité</div><div class="edesc">Marché Louhans, concurrence, clientèle — verdict favorable</div></div><div class="estatus es-d">Complété</div></div>
+      <div class="etape" onclick="showPage('e2')"><div class="eicon cur">2</div><div class="ebody"><div class="enum">Étape 2</div><div class="ename">Modèle économique</div><div class="edesc">Pricing, seuil de rentabilité, charges</div></div><div class="estatus es-c">En cours</div></div>
+      <div class="etape" onclick="showPage('e3')"><div class="eicon todo">3</div><div class="ebody"><div class="enum">Étape 3</div><div class="ename">Structure juridique</div><div class="edesc">SARL, SAS — choix adapté aux deux frères</div></div><div class="estatus es-t">À venir</div></div>
+      <div class="etape" onclick="showPage('e4')"><div class="eicon todo">4</div><div class="ebody"><div class="enum">Étape 4</div><div class="ename">Plan de financement</div><div class="edesc">Apport, prêt, ACRE, BGE</div></div><div class="estatus es-t">À venir</div></div>
+      <div class="etape" onclick="showPage('e5')"><div class="eicon todo">5</div><div class="ebody"><div class="enum">Étape 5</div><div class="ename">Business plan</div><div class="edesc">Document complet pour la banque</div></div><div class="estatus es-t">À venir</div></div>
+      <div class="etape" onclick="showPage('e6')"><div class="eicon todo">6</div><div class="ebody"><div class="enum">Étape 6</div><div class="ename">Checklist administrative</div><div class="edesc">Immatriculation, assurances, licences</div></div><div class="estatus es-t">À venir</div></div>
+      <div class="etape" onclick="showPage('e7')"><div class="eicon todo">7</div><div class="ebody"><div class="enum">Étape 7</div><div class="ename">Développement &amp; lancement</div><div class="edesc">Communication, fidélisation, croissance</div></div><div class="estatus es-t">À venir</div></div>
+    </div>
+  </div>
+
+  <!-- VUE NICOLAS -->
+  <div id="nicolas-accueil" style="display:none">
+    <div class="notice n-ok"><b>Où on en est :</b> Le marché est validé. Tu seras le seul barbier pro en centre-ville de Louhans. Charles gère la suite — toi tu te concentres sur ton BP et tes 4 actions.</div>
+    <div class="shd">Tes actions maintenant</div>
+    <div class="tasks">
+      <div class="task"><div class="tcheck" onclick="toggleTask(this)"></div><div class="tbody"><div class="ttitle">Passer devant S&amp;A Barber Shop — 10 rue d'Alsace</div><div class="tnote">Ouvert ? Du monde ? Tarifs visibles en vitrine ?</div></div><span class="ttag tag-u">Urgent</span></div>
+      <div class="task"><div class="tcheck" onclick="toggleTask(this)"></div><div class="tbody"><div class="ttitle">Donner ton apport à Charles (montant exact)</div><div class="tnote">Même si c'est peu — nécessaire pour la banque</div></div></div>
+      <div class="task"><div class="tcheck" onclick="toggleTask(this)"></div><div class="tbody"><div class="ttitle">Lister ton matériel pro existant</div><div class="tnote">Fauteuil, tondeuses, rasoirs — tout ce qui t'appartient</div></div></div>
+      <div class="task"><div class="tcheck" onclick="toggleTask(this)"></div><div class="tbody"><div class="ttitle">Réussir ton BP — priorité absolue</div><div class="tnote">Sans le BP, pas d'ouverture possible. Charles gère tout le reste.</div></div></div>
+    </div>
+    <div class="two-col" style="margin-top:1.5rem">
+      <div class="card"><div class="ctitle">Ton futur salon</div>
+        <div class="kv"><span class="kk">Emplacement</span><span class="kv-v ac">Centre-ville</span></div>
+        <div class="kv"><span class="kk">Surface</span><span class="kv-v">55 m²</span></div>
+        <div class="kv"><span class="kk">Loyer</span><span class="kv-v">540 €/mois</span></div>
+        <div class="kv"><span class="kk">Ouverture</span><span class="kv-v wa">~6 mois</span></div>
+      </div>
+      <div class="card"><div class="ctitle">Tes futurs tarifs</div>
+        <div class="kv"><span class="kk">Coupe homme</span><span class="kv-v ac">22–25 €</span></div>
+        <div class="kv"><span class="kk">Coupe + barbe</span><span class="kv-v ac">30 €</span></div>
+        <div class="kv"><span class="kk">Barbe seule</span><span class="kv-v ac">12 €</span></div>
+        <div class="kv"><span class="kk">Forfait premium</span><span class="kv-v ac">35–40 €</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TÂCHES -->
+<div class="page" id="page-taches">
+  <div class="ptitle">Tâches &amp; actions</div>
+  <div class="psub">Toutes les actions en attente — par priorité</div>
+  <div class="divider"></div>
+  <div class="shd" style="margin-top:0">Urgent — à faire maintenant</div>
+  <div class="tasks">
+    <div class="task"><div class="tcheck" onclick="toggleTask(this,true)"></div><div class="tbody"><div class="ttitle">Vérifier S&amp;A Barber Shop sur le terrain</div><div class="tnote">10 rue d'Alsace — activité réelle ? tarifs ? ambiance ?</div></div><span class="ttag tag-n">Nicolas</span></div>
+    <div class="task"><div class="tcheck" onclick="toggleTask(this,true)"></div><div class="tbody"><div class="ttitle">Définir le montant exact de l'apport de Nicolas</div><div class="tnote">Avant de construire le plan de financement</div></div><span class="ttag tag-b">Tous les deux</span></div>
+  </div>
+  <div class="shd">Important — avant modèle éco</div>
+  <div class="tasks">
+    <div class="task"><div class="tcheck" onclick="toggleTask(this,true)"></div><div class="tbody"><div class="ttitle">Estimer le budget travaux / aménagement du local</div><div class="tnote">Même approximatif — à visiter avec un artisan si possible</div></div><span class="ttag tag-c">Charles</span></div>
+    <div class="task"><div class="tcheck" onclick="toggleTask(this,true)"></div><div class="tbody"><div class="ttitle">Inventaire du matériel professionnel de Nicolas</div><div class="tnote">Ce qui est là vs ce qui est à acheter — impacte le budget</div></div><span class="ttag tag-n">Nicolas</span></div>
+    <div class="task"><div class="tcheck" onclick="toggleTask(this,true)"></div><div class="tbody"><div class="ttitle">Clarifier le rôle financier de Charles</div><div class="tnote">Capital numéraire, garantie bancaire ou caution ? Conditionne la structure juridique.</div></div><span class="ttag tag-c">Charles</span></div>
+    <div class="task"><div class="tcheck" onclick="toggleTask(this,true)"></div><div class="tbody"><div class="ttitle">Premier contact avec le propriétaire du local</div><div class="tnote">Délai disponibilité, conditions du bail, marge de négociation</div></div><span class="ttag tag-c">Charles</span></div>
+  </div>
+  <div class="shd">Permanent</div>
+  <div class="tasks">
+    <div class="task"><div class="tcheck" onclick="toggleTask(this,true)"></div><div class="tbody"><div class="ttitle">Nicolas : réussir le BP coiffure / barbier</div><div class="tnote">Obligation légale pour ouvrir. Charles gère tout le reste en parallèle.</div></div><span class="ttag tag-n">Nicolas</span></div>
+  </div>
+</div>
+
+<!-- NOTES -->
+<div class="page" id="page-notes">
+  <div class="ptitle">Notes &amp; décisions</div>
+  <div class="psub">Espace libre — tout ce qui compte</div>
+  <div class="divider"></div>
+  <div class="shd" style="margin-top:0">Décisions actées</div>
+  <div class="card" style="margin-bottom:1rem">
+    <div class="tasks">
+      <div class="task"><div class="tcheck checked" style="background:var(--vert);border-color:var(--vert)">✓</div><div class="tbody"><div class="ttitle" style="text-decoration:line-through;color:var(--hi)">Choisir l'outil d'organisation</div><div class="tnote">→ Web app GitHub Pages — accessible à Nicolas depuis son téléphone</div></div></div>
+      <div class="task"><div class="tcheck checked" style="background:var(--vert);border-color:var(--vert)">✓</div><div class="tbody"><div class="ttitle" style="text-decoration:line-through;color:var(--hi)">Valider la faisabilité du marché</div><div class="tnote">→ Verdict favorable. Louhans supporte un barbershop centre-ville.</div></div></div>
+      <div class="task"><div class="tcheck checked" style="background:var(--vert);border-color:var(--vert)">✓</div><div class="tbody"><div class="ttitle" style="text-decoration:line-through;color:var(--hi)">Stratégie de pricing</div><div class="tnote">→ 10–25% au-dessus de Mdr Barber. Coupe à 22–25 €.</div></div></div>
+    </div>
+  </div>
+  <div class="shd">Notes libres</div>
+  <textarea class="narea" id="n-libres" placeholder="Réflexions, idées, observations…" oninput="save('n-libres')"></textarea>
+  <div class="shd" style="margin-top:1rem">Questions en suspens</div>
+  <textarea class="narea" id="n-questions" placeholder="Ce qui reste à éclaircir, les points de doute…" oninput="save('n-questions')"></textarea>
+  <div class="shd" style="margin-top:1rem">Contacts clés</div>
+  <textarea class="narea" id="n-contacts" placeholder="Propriétaire local, banquier, BGE, expert-comptable…" oninput="save('n-contacts')"></textarea>
+</div>
+
+<!-- ÉTAPE 1 -->
+<div class="page" id="page-e1">
+  <div class="ptitle">Étude de faisabilité</div>
+  <div class="psub">Étape 1 · Complétée · Avril 2026</div>
+  <div class="divider"></div>
+  <div class="notice n-ok"><b>Verdict :</b> Marché favorable. Louhans supporte l'ouverture d'un barbershop centre-ville. Concurrence limitée, marché non saturé, bassin élargi (15 communes).</div>
+  <div class="metrics">
+    <div class="metric"><div class="ml">Population</div><div class="mv">6 500</div><div class="ms">habitants 2026</div></div>
+    <div class="metric"><div class="ml">Cible hommes</div><div class="mv">~1 900</div><div class="ms">15–55 ans</div></div>
+    <div class="metric"><div class="ml">Revenu médian</div><div class="mv" style="font-size:16px;margin-top:6px">21 130 €</div><div class="ms">Au-dessus moy. nat.</div></div>
+    <div class="metric"><div class="ml">Chômage</div><div class="mv" style="color:var(--red)">11,3%</div><div class="ms">Sensibilité au prix</div></div>
+  </div>
+  <div class="shd">Concurrents</div>
+  <table class="dtable">
+    <thead><tr><th>Salon</th><th>Type</th><th>Menace</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td><b>Mdr Barber</b></td><td><span class="pill pw">Barbershop</span></td><td><span class="pill pr">Principale</span></td><td>Excentré · quasi-monopole actuel · tarifs connus</td></tr>
+      <tr><td><b>S&amp;A Barber Shop</b></td><td><span class="pill pw">Barbershop</span></td><td><span class="pill pw">Modérée</span></td><td>0 avis en ligne · activité à vérifier terrain</td></tr>
+      <tr><td><b>Caract'Hair</b></td><td><span class="pill pg">Mixte</span></td><td><span class="pill pb">Indirecte</span></td><td>5/5 · 307 avis · clientèle mixte</td></tr>
+      <tr><td><b>Autres coiffeurs</b></td><td><span class="pill pg">Mixtes</span></td><td><span class="pill pn">Faible</span></td><td>Orientés femmes principalement</td></tr>
+    </tbody>
+  </table>
+  <div class="shd" style="margin-top:1.5rem">Positionnement tarifaire</div>
+  <div class="two-col">
+    <div class="card"><div class="ctitle">Mdr Barber (concurrent)</div>
+      <div class="kv"><span class="kk">Coupe homme</span><span class="kv-v">20 €</span></div>
+      <div class="kv"><span class="kk">Barbe</span><span class="kv-v">10 €</span></div>
+      <div class="kv"><span class="kk">Coupe + barbe</span><span class="kv-v">25 €</span></div>
+      <div class="kv"><span class="kk">Rasage tête</span><span class="kv-v">10 €</span></div>
+    </div>
+    <div class="card"><div class="ctitle">Notre cible</div>
+      <div class="kv"><span class="kk">Coupe homme</span><span class="kv-v ac">22–25 €</span><span class="kdiff">+10–25%</span></div>
+      <div class="kv"><span class="kk">Barbe</span><span class="kv-v ac">12 €</span><span class="kdiff">+20%</span></div>
+      <div class="kv"><span class="kk">Coupe + barbe</span><span class="kv-v ac">30 €</span><span class="kdiff">+20%</span></div>
+      <div class="kv"><span class="kk">Forfait premium</span><span class="kv-v ac">35–40 €</span><span class="kdiff">nouveau</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ÉTAPES 2–7 -->
+<div class="page" id="page-e2"><div class="ptitle">Modèle économique</div><div class="psub">Étape 2 · En cours</div><div class="divider"></div><div class="notice n-info"><b>En construction avec Claude.</b> Seuil de rentabilité, charges, prévisionnel 3 ans — sera intégré ici dès que complété.</div></div>
+<div class="page" id="page-e3"><div class="ptitle">Structure juridique</div><div class="psub">Étape 3 · À venir</div><div class="divider"></div><div class="notice n-info"><b>À construire.</b> Choix de la forme juridique adaptée à deux frères avec rôles asymétriques.</div></div>
+<div class="page" id="page-e4"><div class="ptitle">Plan de financement</div><div class="psub">Étape 4 · À venir</div><div class="divider"></div><div class="notice n-info"><b>À construire.</b> Apport, prêt bancaire, ACRE, ARCE, prêt d'honneur BGE.</div></div>
+<div class="page" id="page-e5"><div class="ptitle">Business plan</div><div class="psub">Étape 5 · À venir</div><div class="divider"></div><div class="notice n-info"><b>À construire.</b> Document complet destiné à convaincre la banque.</div></div>
+<div class="page" id="page-e6"><div class="ptitle">Checklist administrative</div><div class="psub">Étape 6 · À venir</div><div class="divider"></div><div class="notice n-info"><b>À construire.</b> Immatriculation, assurances, licences — liste séquencée pour Nicolas.</div></div>
+<div class="page" id="page-e7"><div class="ptitle">Développement &amp; lancement</div><div class="psub">Étape 7 · À venir</div><div class="divider"></div><div class="notice n-info"><b>À construire.</b> Communication locale, réseaux sociaux, fidélisation, évolutions futures.</div></div>
+
+</main>
+</div>
+
+<!-- MOBILE NAV -->
+<nav class="mnav" id="mnav">
+  <button class="mbtn active" onclick="showPage('accueil')"><span class="micon">⌂</span>Accueil</button>
+  <button class="mbtn" onclick="showPage('taches')"><span class="micon">✓</span>Tâches</button>
+  <button class="mbtn" id="mnav-marche" onclick="showPage('e1')"><span class="micon">①</span>Marché</button>
+  <button class="mbtn" id="mnav-notes" onclick="showPage('notes')"><span class="micon">✎</span>Notes</button>
+</nav>
+
+<script>
+let profile='charles';
+
+function setProfile(p){
+  profile=p;
+  document.querySelectorAll('.pbtn').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`.pbtn[onclick="setProfile('${p}')"]`).classList.add('active');
+  const isNico=p==='nicolas';
+  document.getElementById('charles-accueil').style.display=isNico?'none':'block';
+  document.getElementById('nicolas-accueil').style.display=isNico?'block':'none';
+  document.getElementById('sidebar').style.display=isNico?'none':'';
+  document.getElementById('mnav-marche').style.display=isNico?'none':'';
+  document.getElementById('mnav-notes').style.display=isNico?'none':'';
+  showPage('accueil');
+}
+
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-item,.mbtn').forEach(b=>b.classList.remove('active'));
+  const p=document.getElementById('page-'+name);
+  if(p)p.classList.add('active');
+  document.querySelectorAll(`[onclick="showPage('${name}')"]`).forEach(b=>b.classList.add('active'));
+  window.scrollTo(0,0);
+}
+
+function toggleTask(box,updateBadge){
+  box.classList.toggle('checked');
+  box.textContent=box.classList.contains('checked')?'✓':'';
+  const t=box.closest('.task').querySelector('.ttitle');
+  if(t)t.classList.toggle('checked');
+  if(updateBadge)refreshBadge();
+}
+
+function refreshBadge(){
+  const total=document.querySelectorAll('#page-taches .tcheck').length;
+  const done=document.querySelectorAll('#page-taches .tcheck.checked').length;
+  const rem=total-done;
+  const b=document.getElementById('tbadge');
+  if(b){b.textContent=rem;b.className='sbadge '+(rem===0?'sb-d':'sb-c');}
+}
+
+function save(id){
+  try{localStorage.setItem('bs_'+id,document.getElementById(id).value);}catch(e){}
+}
+
+function loadAll(){
+  ['n-libres','n-questions','n-contacts'].forEach(id=>{
+    try{const v=localStorage.getItem('bs_'+id);if(v&&document.getElementById(id))document.getElementById(id).value=v;}catch(e){}
+  });
+  refreshBadge();
+}
+
+loadAll();
+</script>
+</body>
+</html>
